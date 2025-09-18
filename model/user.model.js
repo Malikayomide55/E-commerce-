@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  otp: {type: Number},
+  otpUsed: {type: Boolean},
 });
 
 module.exports = mongoose.model('User', userSchema);

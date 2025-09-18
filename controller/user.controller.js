@@ -1,4 +1,4 @@
-const {signupService, loginService} = require('../service/user.service.js');
+const {signupService, loginService, otpService, resetPasswordService} = require('../service/user.service.js');
 
 const login = async(req, res)=>{
   try{
@@ -22,4 +22,26 @@ const signup = async(req, res)=>{
   }
 };
 
-module.exports={ login, signup };
+const otp = async(req, res)=>{
+  try{
+    const {username} = req.body
+    const data = await otpService(username);
+    res.status(200).json(data);
+  }
+  catch(e){
+    res.status(400).json({msg: e.message, status: 400})
+  }
+};
+
+const resetPassword = async(req, res)=>{
+  try{
+    const {username} = req.body
+    const data = await otpService(username);
+    res.status(200).json(data);
+  }
+  catch(e){
+    res.status(400).json({msg: e.message, status: 400})
+  }
+};
+
+module.exports={ login, signup, otp, resetPassword };
