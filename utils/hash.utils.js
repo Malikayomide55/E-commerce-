@@ -8,7 +8,6 @@ const hashPassword= async(password, numOfSalt)=>{
   return hash;
 };
 
-
 const validatePassword= async(password, hash)=>{
   const isValid = await bcrypt.compare(password, hash);
   console.log('isValid:', isValid);
@@ -17,5 +16,5 @@ const validatePassword= async(password, hash)=>{
 
 module.exports={
   hashPassword,
-  validatePassword
-}
+  validatePassword,
+};
