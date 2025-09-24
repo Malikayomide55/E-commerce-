@@ -35,8 +35,8 @@ const otp = async(req, res)=>{
 
 const resetPassword = async(req, res)=>{
   try{
-    const {username} = req.body
-    const data = await otpService(username);
+    const {username, otp, newPassword} = req.body
+    const data = await resetPasswordService(username, otp, newPassword);
     res.status(200).json(data);
   }
   catch(e){

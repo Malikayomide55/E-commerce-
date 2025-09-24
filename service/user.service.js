@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const User = require('../model/user.model.js');
 const jwt = require('jsonwebtoken');
 const {hashPassword, validatePassword} = require('../utils/hash.utils.js');
+const {otp} = require('../utils/otp.utils.js');
 
 const loginService = async(username, password)=>{
   try{
@@ -33,7 +34,8 @@ const signupService = async(username, password)=>{
 const otpService = async (username)=>{
   try{
     const existingUser = await User.findOne({username})
-    const otp = Math.floor (Math.random()*10**6)
+    if(!existingUser) throw new Error ('username does not exist');
+    otp
     console.log('otp:', otp)
     if (existingUser.otpUsed) throw new error ('opt has been used')
     existingUser.otp = otp;
@@ -47,20 +49,24 @@ const otpService = async (username)=>{
   }
 };
 
-const resetPasswordService = async (username)=>{
+const resetPasswordService = async (username, otp, newPassword)=>{
   try{
     const existingUser = await User.findOne({username})
-    const otp = Math.floor (Math.random()*10**6)
-    console.log('otp:', otp)
-    if (existingUser.otpUsed) throw new error ('opt has been used')
-    existingUser.otp = otp;
-    existingUser.otpUsed = false;
+    if (existingUser.otpUsed) throw new error ('otp has been used')
+    if (existingUser.otp!= otp) throw new Error('Incorrect otp')
+    
+    if (!newPassword) throw new Error ('input a new password')
+    const hashedPassword = await hashPassword(newPassword, 10);
+    existingUser.password = hashedPassword;
+    existingUser.otpUsed = true;
+    const token = jwt.sign({id: existingUser._id}, process.env.JWT_SECRET, {expiresIn: '1h'})
+    
     await existingUser.save()
     
-    return{msg: 'check email for otp', status: 200};
+    return{msg: 'password changed successfully', status: 200, data: existingUser.username, token};
   }  
   catch(e){
-    res.status(400).json({msg: e.message, status: 400})
+    return{msg: e.message, status: 400};
   }
 };
 

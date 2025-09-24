@@ -2,6 +2,7 @@ const express = require ("express");
 const app = express ();
 const mongoose = require('mongoose');
 const userRoute = require('./route/user.route.js');
+const productRoute = require('./route/product.route.js');
 require('dotenv').config();
 
 //connect mongodb
@@ -22,6 +23,7 @@ connectDB();
 //routes
 app.use(express.json());
 app.use('/api', userRoute);
+app.use('/api', productRoute);
 
 app.get('/', (req, res)=>{
   res.send('welcome')
