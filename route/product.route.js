@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const {createProduct, getProduct, getProductById} = require('../controller/product.controller.js');
-const {protect} = require('../middleware/auth.middleware.js');
+const {protect, adminProtect} = require('../middleware/auth.middleware.js');
 
-router.post('/createProduct', protect, createProduct);
+router.post('/createProduct', adminProtect, createProduct);
 
 router.get('/getProduct', getProduct);
 router.get('/getProductById/:id', getProductById);

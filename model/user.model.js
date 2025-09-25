@@ -12,6 +12,10 @@ const userSchema = new mongoose.Schema({
   },
   otp: {type: Number},
   otpUsed: {type: Boolean},
+  role:{
+    type: String,
+    default: 'user',
+  },
 });
 
 module.exports = mongoose.model('User', userSchema);

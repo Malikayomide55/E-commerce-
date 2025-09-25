@@ -12,8 +12,10 @@ const loginService = async(username, password)=>{
     }
     const dbHash = existingUser.password
     const isValid = await validatePassword(password, dbHash)
-    if (!isValid) throw new Error('incorrect password and usernamea')
-    const token = jwt.sign({id: existingUser._id}, process.env.JWT_SECRET, {expiresIn: '1h'})
+    if (!isValid) throw new Error('incorrect password and username')
+    console.log('existingUser:', existingUser)
+    const token = jwt.sign({id: existingUser._id, role: existingUser.role, s:'dummy'}, process.env.JWT_SECRET, {expiresIn: '1h'})
+    console.log('token:', token)
     return{msg: 'login successfully', token: token, data:{username:existingUser.username}, status: 200};
   }
   catch(e){
@@ -59,7 +61,7 @@ const resetPasswordService = async (username, otp, newPassword)=>{
     const hashedPassword = await hashPassword(newPassword, 10);
     existingUser.password = hashedPassword;
     existingUser.otpUsed = true;
-    const token = jwt.sign({id: existingUser._id}, process.env.JWT_SECRET, {expiresIn: '1h'})
+    const token = jwt.sign({id: existingUser._id, role: existingUser.role}, process.env.JWT_SECRET, {expiresIn: '1h'})
     
     await existingUser.save()
     
