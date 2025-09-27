@@ -1,7 +1,8 @@
 const express = require ("express");
 const app = express ();
 const mongoose = require('mongoose');
-const userRoute = require('./route/user.route.js');
+const userRoute = require('./route/user.routes.js');
+const productRoute = require('./route/product.routes.js')
 require('dotenv').config();
 
 //connect mongodb
@@ -19,10 +20,9 @@ const connectDB = async()=>{
 };
 connectDB();
 
-
-//routes
 app.use(express.json());
 app.use('/api', userRoute);
+app.use('/api', productRoute);
 
 app.get('/', (req, res)=>{
   res.send('welcome')

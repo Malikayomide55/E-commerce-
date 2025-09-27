@@ -11,7 +11,11 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   otp:{type: Number},
-  otpUsed: {type: Boolean}
+  otpUsed: {type: Boolean},
+  role:{
+    type: String,
+    default:"user"
+  },
 });
 
 module.exports = mongoose.model('User', userSchema);
