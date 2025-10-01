@@ -1,9 +1,10 @@
+require('dotenv').config();
 const express = require ("express");
 const app = express ();
 const mongoose = require('mongoose');
 const userRoute = require('./route/user.route.js');
 const productRoute = require('./route/product.route.js');
-require('dotenv').config();
+const {notifMsg} = require('./utils/mailer.utils.js')
 
 //connect mongodb
 const connectDB = async()=>{
@@ -28,6 +29,8 @@ app.use('/api', productRoute);
 app.get('/', (req, res)=>{
   res.send('welcome')
 });
+
+notifMsg("olumidebackend@gmail.com")
 
 app.listen(5000, ()=>{
   console.log('server is running');
