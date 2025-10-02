@@ -3,43 +3,45 @@ const User = require('../model/user.model.js');
 const jwt = require('jsonwebtoken');
 const {hashPassword, validatePassword} = require('../utils/hash.utils.js');
 const {otp} = require('../utils/otp.utils.js');
+const {otpMail} = require('../utils/mailer.utils.js');
 
-const loginService = async(username, password)=>{
+const loginService = async(email, password)=>{
   try{
-    const existingUser = await User.findOne({username: username})
+    const existingUser = await User.findOne({email: email})
     if (!existingUser) {
-      throw new Error('username does not exist');
+      throw new Error('email does not exist');
     }
     const dbHash = existingUser.password
     const isValid = await validatePassword(password, dbHash)
-    if (!isValid) throw new Error('incorrect password and username')
+    if (!isValid) throw new Error('incorrect password and email')
     console.log('existingUser:', existingUser)
     const token = jwt.sign({id: existingUser._id, role: existingUser.role, s:'dummy'}, process.env.JWT_SECRET, {expiresIn: '1h'})
     console.log('token:', token)
-    return{msg: 'login successfully', token: token, data:{username:existingUser.username}, status: 200};
+    return{msg: 'login successfully', token: token, data:{email:existingUser.email}, status: 200};
   }
   catch(e){
     return{msg: e.message, status: 404}
   }
 };
 
-const signupService = async(username, password)=>{
-  const existingUser = await User.findOne({username})
-  if (existingUser) throw new Error('username already exist');
+const signupService = async(email, password)=>{
+  const existingUser = await User.findOne({email})
+  if (existingUser) throw new Error('email already exist');
   const hashedPassword = await hashPassword(password, 10);
-  const newUser = new User({username, password: hashedPassword});
+  const newUser = new User({email, password: hashedPassword});
   newUser.save();
   
   return{msg: 'successfully registered'};
 };
 
-const otpService = async (username)=>{
+const otpService = async (email)=>{
   try{
-    const existingUser = await User.findOne({username})
-    if(!existingUser) throw new Error ('username does not exist');
+    const existingUser = await User.findOne({email})
+    if(!existingUser) throw new Error ('email does not exist');
     otp
-    console.log('otp:', otp)
-    if (existingUser.otpUsed) throw new error ('opt has been used')
+    console.log('generated otp:', otp)
+    await otpMail(existingUser.email, otp)
+    if (existingUser.otpUsed) throw new Error ('opt has been used')
     existingUser.otp = otp;
     existingUser.otpUsed = false;
     await existingUser.save()
@@ -51,9 +53,9 @@ const otpService = async (username)=>{
   }
 };
 
-const resetPasswordService = async (username, otp, newPassword)=>{
+const resetPasswordService = async (email, otp, newPassword)=>{
   try{
-    const existingUser = await User.findOne({username})
+    const existingUser = await User.findOne({email})
     if (existingUser.otpUsed) throw new error ('otp has been used')
     if (existingUser.otp!= otp) throw new Error('Incorrect otp')
     
@@ -65,7 +67,7 @@ const resetPasswordService = async (username, otp, newPassword)=>{
     
     await existingUser.save()
     
-    return{msg: 'password changed successfully', status: 200, data: existingUser.username, token};
+    return{msg: 'password changed successfully', status: 200, data: existingUser.email, token};
   }  
   catch(e){
     return{msg: e.message, status: 400};

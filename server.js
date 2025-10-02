@@ -30,7 +30,6 @@ app.get('/', (req, res)=>{
   res.send('welcome')
 });
 
-notifMsg("olumidebackend@gmail.com")
 
 app.listen(5000, ()=>{
   console.log('server is running');

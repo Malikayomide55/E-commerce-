@@ -2,8 +2,8 @@ const {signupService, loginService, otpService, resetPasswordService} = require(
 
 const login = async(req, res)=>{
   try{
-    const {username, password} = req.body
-    const data = await loginService(username, password);
+    const {email, password} = req.body
+    const data = await loginService(email, password);
     res.status(200).json(data);
   }
   catch(e){
@@ -13,8 +13,8 @@ const login = async(req, res)=>{
 
 const signup = async(req, res)=>{
   try{
-    const {username, password} = req.body
-    const data = await signupService(username, password);
+    const {email, password} = req.body
+    const data = await signupService(email, password);
     res.status(200).json(data);
   }
   catch(e){
@@ -24,8 +24,8 @@ const signup = async(req, res)=>{
 
 const otp = async(req, res)=>{
   try{
-    const {username} = req.body
-    const data = await otpService(username);
+    const {email} = req.body
+    const data = await otpService(email);
     res.status(200).json(data);
   }
   catch(e){
@@ -35,8 +35,8 @@ const otp = async(req, res)=>{
 
 const resetPassword = async(req, res)=>{
   try{
-    const {username, otp, newPassword} = req.body
-    const data = await resetPasswordService(username, otp, newPassword);
+    const {email, otp, newPassword} = req.body
+    const data = await resetPasswordService(email, otp, newPassword);
     res.status(200).json(data);
   }
   catch(e){
